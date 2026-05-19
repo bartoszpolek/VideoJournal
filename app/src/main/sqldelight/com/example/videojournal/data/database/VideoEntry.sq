@@ -1,0 +1,28 @@
+CREATE TABLE videoEntryEntity (
+  id TEXT NOT NULL PRIMARY KEY,
+  filePath TEXT NOT NULL,
+  thumbnailPath TEXT,
+  description TEXT,
+  durationMs INTEGER NOT NULL,
+  createdAtMillis INTEGER NOT NULL
+);
+
+selectAll:
+SELECT *
+FROM videoEntryEntity
+ORDER BY createdAtMillis DESC;
+
+insertOrReplace:
+INSERT OR REPLACE INTO videoEntryEntity(
+  id,
+  filePath,
+  thumbnailPath,
+  description,
+  durationMs,
+  createdAtMillis
+)
+VALUES (?, ?, ?, ?, ?, ?);
+
+deleteById:
+DELETE FROM videoEntryEntity
+WHERE id = ?;
