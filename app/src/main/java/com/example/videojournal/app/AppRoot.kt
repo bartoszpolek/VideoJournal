@@ -12,20 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.videojournal.presentation.design.VideoJournalTheme
 
-sealed interface AppRoute {
-    val route: String
-}
-
-data object FeedRoute : AppRoute {
-    override val route: String = "feed"
-}
-
-data object RecordRoute : AppRoute {
-    override val route: String = "record"
-}
-
 @Composable
-fun AppNavigation(modifier: Modifier = Modifier) {
+fun AppRoot(modifier: Modifier = Modifier) {
     Scaffold(modifier = modifier.fillMaxSize()) { innerPadding ->
         Box(
             modifier = Modifier
@@ -43,8 +31,8 @@ fun AppNavigation(modifier: Modifier = Modifier) {
 
 @Preview(showBackground = true)
 @Composable
-private fun AppNavigationPreview() {
+private fun AppRootPreview() {
     VideoJournalTheme {
-        AppNavigation()
+        AppRoot()
     }
 }

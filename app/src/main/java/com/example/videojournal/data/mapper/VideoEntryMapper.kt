@@ -12,13 +12,3 @@ fun VideoEntryEntity.toDomain(): VideoEntry =
         durationMs = durationMs,
         createdAtMillis = createdAtMillis,
     )
-
-fun VideoEntry.toEntity(): VideoEntryEntity =
-    VideoEntryEntity(
-        id = id,
-        filePath = filePath,
-        thumbnailPath = thumbnailPath,
-        description = description,
-        durationMs = durationMs,
-        createdAtMillis = createdAtMillis,
-    )

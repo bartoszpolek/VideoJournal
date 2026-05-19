@@ -6,8 +6,10 @@ import app.cash.turbine.test
 import com.example.videojournal.data.database.VideoJournalDatabase
 import com.example.videojournal.domain.model.VideoEntry
 import com.example.videojournal.domain.testing.TestDispatcherProvider
+import com.example.videojournal.domain.testing.videoEntry
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -32,8 +34,8 @@ class OfflineVideoRepositoryTest {
     }
 
     @Test
-    fun observeVideosEmitsLatestFirstAndUpdates() = runTest {
-        val repository = createRepository()
+    fun `observe videos emits latest first and updates`() = runTest {
+        val repository = createRepository(StandardTestDispatcher(testScheduler))
         val older = videoEntry(id = "older", createdAtMillis = 1_000L)
         val newer = videoEntry(id = "newer", createdAtMillis = 2_000L)
 
@@ -51,8 +53,8 @@ class OfflineVideoRepositoryTest {
     }
 
     @Test
-    fun deleteByIdRemovesPersistedVideo() = runTest {
-        val repository = createRepository()
+    fun `delete by id removes persisted video`() = runTest {
+        val repository = createRepository(StandardTestDispatcher(testScheduler))
         val video = videoEntry(id = "video-id")
 
         repository.observeVideos().test {
@@ -68,22 +70,9 @@ class OfflineVideoRepositoryTest {
         }
     }
 
-    private fun createRepository(): OfflineVideoRepository =
+    private fun createRepository(dispatcher: CoroutineDispatcher): OfflineVideoRepository =
         OfflineVideoRepository(
             database = database,
-            dispatcherProvider = TestDispatcherProvider(UnconfinedTestDispatcher()),
-        )
-
-    private fun videoEntry(
-        id: String,
-        createdAtMillis: Long = 1_000L,
-    ): VideoEntry =
-        VideoEntry(
-            id = id,
-            filePath = "/files/videos/$id.mp4",
-            thumbnailPath = "/files/thumbnails/$id.jpg",
-            description = "description $id",
-            durationMs = 5_000L,
-            createdAtMillis = createdAtMillis,
+            dispatcherProvider = TestDispatcherProvider(dispatcher),
         )
 }

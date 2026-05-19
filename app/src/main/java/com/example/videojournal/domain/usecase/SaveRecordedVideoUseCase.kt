@@ -20,17 +20,19 @@ class SaveRecordedVideoUseCase(
         recording: PendingRecording,
         description: String?,
     ): VideoEntry = withContext(dispatcherProvider.io) {
-        val videoPath = storage.promoteTempRecording(recording.filePath)
+        val tempVideoPath = recording.tempFilePath
+        var finalVideoPath: String? = null
         var thumbnailPath: String? = null
 
         try {
+            finalVideoPath = storage.promoteTempRecording(tempVideoPath)
             thumbnailPath = runCatchingNonCancellation {
-                thumbnailGenerator.generate(videoPath)
+                thumbnailGenerator.generate(finalVideoPath)
             }.getOrNull()
 
             val video = VideoEntry(
                 id = UUID.randomUUID().toString(),
-                filePath = videoPath,
+                filePath = finalVideoPath,
                 thumbnailPath = thumbnailPath,
                 description = description.normalizeDescription(),
                 durationMs = recording.durationMs,
@@ -40,7 +42,8 @@ class SaveRecordedVideoUseCase(
             repository.save(video)
             video
         } catch (throwable: Throwable) {
-            runCatchingNonCancellation { storage.deleteFile(videoPath) }
+            val videoPathToDelete = finalVideoPath ?: tempVideoPath
+            runCatchingNonCancellation { storage.deleteFile(videoPathToDelete) }
             thumbnailPath?.let { runCatchingNonCancellation { storage.deleteFile(it) } }
             throw throwable
         }
