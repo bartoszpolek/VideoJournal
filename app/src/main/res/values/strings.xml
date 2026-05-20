@@ -11,4 +11,21 @@
     <string name="feed_delete_dialog_confirm">Delete</string>
     <string name="feed_delete_dialog_dismiss">Cancel</string>
     <string name="feed_delete_dialog_title">Delete video?</string>
+    <string name="record_camera_permission_body">Camera and microphone access are required to record journal clips.</string>
+    <string name="record_camera_permission_button">Grant access</string>
+    <string name="record_camera_permission_settings">Open settings</string>
+    <string name="record_camera_permission_title">Camera and microphone access needed</string>
+    <string name="record_description_label">Description</string>
+    <string name="record_discard">Discard</string>
+    <string name="record_done">Saved</string>
+    <string name="record_error_save">Could not save recording</string>
+    <string name="record_error_start">Could not start recording</string>
+    <string name="record_ready_title">Ready to record</string>
+    <string name="record_review_title">Review clip</string>
+    <string name="record_save">Save</string>
+    <string name="record_saving">Saving...</string>
+    <string name="record_starting">Starting...</string>
+    <string name="record_start">Record</string>
+    <string name="record_stop">Stop</string>
+    <string name="record_try_again">Try again</string>
 </resources>
