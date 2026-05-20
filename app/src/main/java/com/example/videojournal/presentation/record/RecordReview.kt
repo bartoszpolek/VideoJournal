@@ -1,12 +1,22 @@
 package com.example.videojournal.presentation.record
 
 import androidx.camera.view.LifecycleCameraController
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -15,6 +25,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -23,6 +35,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
 import com.example.videojournal.R
 import com.example.videojournal.presentation.design.VideoJournalTheme
+import com.example.videojournal.presentation.media.VideoPlayer
+import com.example.videojournal.presentation.media.rememberVideoExoPlayer
+
+private val RecordReviewPreviewColor = Color.Black
 
 @Composable
 internal fun RecordReview(
@@ -32,47 +48,79 @@ internal fun RecordReview(
     onDiscard: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
+    val exoPlayer = rememberVideoExoPlayer()
+
+    BoxWithConstraints(
         modifier = modifier
             .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.Center,
+            .statusBarsPadding()
+            .navigationBarsPadding()
+            .imePadding(),
     ) {
-        Text(
-            text = stringResource(R.string.record_review_title),
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.SemiBold,
-        )
-        Text(
-            text = formatRecordDuration(state.durationMs),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(top = 4.dp),
-        )
-        OutlinedTextField(
-            value = state.description,
-            onValueChange = onDescriptionChanged,
-            label = { Text(stringResource(R.string.record_description_label)) },
+        val previewHeight = when {
+            maxHeight < 480.dp -> 180.dp
+            maxHeight < 680.dp -> 260.dp
+            else -> 420.dp
+        }
+
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 20.dp),
-            minLines = 3,
-        )
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 20.dp),
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically,
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
-            TextButton(onClick = onDiscard) {
-                Text(stringResource(R.string.record_discard))
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(
+                    text = stringResource(R.string.record_review_title),
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.SemiBold,
+                )
+                Text(
+                    text = formatRecordDuration(state.durationMs),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
-            Button(
-                onClick = onSave,
-                modifier = Modifier.padding(start = 12.dp),
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(previewHeight)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(RecordReviewPreviewColor),
             ) {
-                Text(stringResource(R.string.record_save))
+                VideoPlayer(
+                    exoPlayer = exoPlayer,
+                    videoPath = state.tempFilePath,
+                    playWhenReady = true,
+                    useController = true,
+                    modifier = Modifier.fillMaxSize(),
+                )
+            }
+
+            OutlinedTextField(
+                value = state.description,
+                onValueChange = onDescriptionChanged,
+                label = { Text(stringResource(R.string.record_description_label)) },
+                modifier = Modifier.fillMaxWidth(),
+                minLines = 3,
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                TextButton(onClick = onDiscard) {
+                    Text(stringResource(R.string.record_discard))
+                }
+                Button(
+                    onClick = onSave,
+                    modifier = Modifier.padding(start = 12.dp),
+                ) {
+                    Text(stringResource(R.string.record_save))
+                }
             }
         }
     }

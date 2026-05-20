@@ -6,6 +6,7 @@
     <string name="feed_error_unavailable">Feed unavailable</string>
     <string name="feed_empty_body">Saved clips will appear here.</string>
     <string name="feed_empty_title">No videos yet</string>
+    <string name="feed_record_video_content_description">Record video</string>
     <string name="feed_video_fallback_title">Video</string>
     <string name="feed_delete_dialog_body">This video will be removed from the journal.</string>
     <string name="feed_delete_dialog_confirm">Delete</string>

@@ -10,16 +10,21 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -37,6 +42,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -49,19 +55,22 @@ import androidx.media3.exoplayer.ExoPlayer
 import com.example.videojournal.R
 import com.example.videojournal.domain.model.VideoEntry
 import com.example.videojournal.presentation.design.VideoJournalTheme
+import com.example.videojournal.presentation.media.VideoPlayer
+import com.example.videojournal.presentation.media.rememberVideoExoPlayer
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.mapNotNull
 
-private val FeedBackgroundColor = Color.Black
 private val FeedPlaceholderColor = Color(0xFF101114)
 private val FeedOnMediaColor = Color.White
 private val FeedPlayIndicatorContainerColor = FeedOnMediaColor.copy(alpha = 0.18f)
 private val FeedMutedTextColor = FeedOnMediaColor.copy(alpha = 0.4f)
+private val FeedVideoShape = RoundedCornerShape(36.dp)
 
 @Composable
 fun FeedRoute(
     viewModel: FeedViewModel,
+    onRecordClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -86,6 +95,18 @@ fun FeedRoute(
             hostState = snackbarHostState,
             modifier = Modifier.align(Alignment.BottomCenter),
         )
+        FloatingActionButton(
+            onClick = onRecordClick,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .navigationBarsPadding()
+                .padding(24.dp),
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = stringResource(R.string.feed_record_video_content_description),
+            )
+        }
     }
 }
 
@@ -119,10 +140,23 @@ private fun FeedContent(
     modifier: Modifier = Modifier,
 ) {
     val pagerState = rememberPagerState(pageCount = { state.items.size })
-    val exoPlayer = rememberFeedExoPlayer()
+    val exoPlayer = rememberVideoExoPlayer()
+    val itemIds = remember(state.items) { state.items.map { it.id } }
+    var previousItemIds by remember { mutableStateOf(itemIds) }
     var pendingDeleteId by rememberSaveable { mutableStateOf<String?>(null) }
     val pendingDelete = pendingDeleteId?.let { id ->
         state.items.firstOrNull { it.id == id }
+    }
+
+    LaunchedEffect(itemIds) {
+        val currentFirstItemId = itemIds.firstOrNull() ?: return@LaunchedEffect
+        val previousIds = previousItemIds
+        previousItemIds = itemIds
+
+        if (previousIds.isNotEmpty() && currentFirstItemId !in previousIds) {
+            pagerState.scrollToPage(0)
+            onIntent(FeedIntent.PageChanged(currentFirstItemId))
+        }
     }
 
     LaunchedEffect(pendingDelete, pendingDeleteId) {
@@ -143,7 +177,7 @@ private fun FeedContent(
         state = pagerState,
         modifier = modifier
             .fillMaxSize()
-            .background(FeedBackgroundColor),
+            .background(MaterialTheme.colorScheme.background),
         key = { page -> state.items[page].id },
     ) { page ->
         val item = state.items[page]
@@ -183,54 +217,65 @@ private fun FeedPage(
 ) {
     Box(
         modifier = modifier
-            .background(FeedBackgroundColor),
+            .background(MaterialTheme.colorScheme.background),
+        contentAlignment = Alignment.Center,
     ) {
-        if (isActivePage) {
-            VideoPlayer(
-                exoPlayer = exoPlayer,
-                videoPath = item.filePath,
-                playWhenReady = isPlaying,
-                modifier = Modifier.fillMaxSize(),
-            )
-            if (!isPlaying) {
-                PlayIndicator(modifier = Modifier.align(Alignment.Center))
-            }
-        } else {
-            VideoPlaceholder(
-                item = item,
-                modifier = Modifier.fillMaxSize(),
-            )
-        }
-
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .combinedClickable(
-                    onClick = onVideoTapped,
-                    onLongClick = onDeleteRequested,
-                ),
-        )
-
-        IconButton(
-            onClick = onDeleteRequested,
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(16.dp),
+                .statusBarsPadding()
+                .navigationBarsPadding()
+                .padding(horizontal = 6.dp, vertical = 10.dp)
+                .clip(FeedVideoShape)
+                .background(FeedPlaceholderColor),
         ) {
-            Icon(
-                imageVector = Icons.Default.Delete,
-                contentDescription = stringResource(R.string.feed_delete_video_content_description),
-                tint = FeedOnMediaColor,
+            if (isActivePage) {
+                VideoPlayer(
+                    exoPlayer = exoPlayer,
+                    videoPath = item.filePath,
+                    playWhenReady = isPlaying,
+                    modifier = Modifier.fillMaxSize(),
+                )
+                if (!isPlaying) {
+                    PlayIndicator(modifier = Modifier.align(Alignment.Center))
+                }
+            } else {
+                VideoPlaceholder(
+                    item = item,
+                    modifier = Modifier.fillMaxSize(),
+                )
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .combinedClickable(
+                        onClick = onVideoTapped,
+                        onLongClick = onDeleteRequested,
+                    ),
+            )
+
+            IconButton(
+                onClick = onDeleteRequested,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(16.dp),
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = stringResource(R.string.feed_delete_video_content_description),
+                    tint = FeedOnMediaColor,
+                )
+            }
+
+            FeedMetadata(
+                item = item,
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .fillMaxWidth()
+                    .padding(start = 20.dp, end = 96.dp, bottom = 20.dp),
             )
         }
-
-        FeedMetadata(
-            item = item,
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .fillMaxWidth()
-                .padding(20.dp),
-        )
     }
 }
 

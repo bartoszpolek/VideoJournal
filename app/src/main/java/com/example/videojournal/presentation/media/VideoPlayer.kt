@@ -1,4 +1,4 @@
-package com.example.videojournal.presentation.feed
+package com.example.videojournal.presentation.media
 
 import android.net.Uri
 import androidx.annotation.OptIn
@@ -22,8 +22,8 @@ import java.io.File
 
 @OptIn(UnstableApi::class)
 @Composable
-fun rememberFeedExoPlayer(): ExoPlayer {
-    val context = LocalContext.current
+fun rememberVideoExoPlayer(): ExoPlayer {
+    val context = LocalContext.current.applicationContext
     val lifecycleOwner = LocalLifecycleOwner.current
     val exoPlayer = remember {
         ExoPlayer.Builder(context)
@@ -43,6 +43,11 @@ fun rememberFeedExoPlayer(): ExoPlayer {
 
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+    DisposableEffect(exoPlayer) {
+        onDispose {
             exoPlayer.release()
         }
     }
@@ -57,6 +62,7 @@ fun VideoPlayer(
     videoPath: String,
     playWhenReady: Boolean,
     modifier: Modifier = Modifier,
+    useController: Boolean = false,
 ) {
     LaunchedEffect(exoPlayer, videoPath, playWhenReady) {
         val uri = Uri.fromFile(File(videoPath))
@@ -73,12 +79,13 @@ fun VideoPlayer(
         factory = { viewContext ->
             PlayerView(viewContext).apply {
                 player = exoPlayer
-                useController = false
+                this.useController = useController
                 resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
             }
         },
         update = { playerView ->
             playerView.player = exoPlayer
+            playerView.useController = useController
         },
     )
 }

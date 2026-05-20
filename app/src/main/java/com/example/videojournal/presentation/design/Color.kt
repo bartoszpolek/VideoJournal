@@ -2,10 +2,13 @@ package com.example.videojournal.presentation.design
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
-
-val Purple40 = Color(0xFF6650A4)
-val PurpleGrey40 = Color(0xFF625B71)
-val Pink40 = Color(0xFF7D5260)
+val JournalPrimary = Color(0xFF1D4ED8)
+val JournalOnPrimary = Color(0xFFFFFFFF)
+val JournalPrimaryContainer = Color(0xFFDBEAFE)
+val JournalOnPrimaryContainer = Color(0xFF0F172A)
+val JournalSecondary = Color(0xFF475569)
+val JournalBackground = Color(0xFFF8FAFC)
+val JournalSurface = Color(0xFFFFFFFF)
+val JournalOnSurface = Color(0xFF0F172A)
+val JournalOnSurfaceVariant = Color(0xFF475569)
+val JournalOutline = Color(0xFF64748B)
