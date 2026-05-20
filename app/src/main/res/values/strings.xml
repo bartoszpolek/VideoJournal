@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">VideoJournal</string>
+    <string name="feed_delete_video_content_description">Delete video</string>
+    <string name="feed_error_delete">Could not delete video</string>
+    <string name="feed_error_load">Could not load videos</string>
+    <string name="feed_error_unavailable">Feed unavailable</string>
+    <string name="feed_empty_body">Saved clips will appear here.</string>
+    <string name="feed_empty_title">No videos yet</string>
+    <string name="feed_video_fallback_title">Video</string>
+    <string name="feed_delete_dialog_body">This video will be removed from the journal.</string>
+    <string name="feed_delete_dialog_confirm">Delete</string>
+    <string name="feed_delete_dialog_dismiss">Cancel</string>
+    <string name="feed_delete_dialog_title">Delete video?</string>
 </resources>
