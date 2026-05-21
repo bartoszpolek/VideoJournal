@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.videojournal.R
+import com.example.videojournal.presentation.design.JournalSpacing
 import com.example.videojournal.presentation.design.VideoJournalTheme
 
 @Composable
@@ -65,7 +66,7 @@ internal fun RecordStatus(
             .fillMaxSize()
             .statusBarsPadding()
             .navigationBarsPadding()
-            .padding(32.dp),
+            .padding(JournalSpacing.space32),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
@@ -80,13 +81,13 @@ internal fun RecordStatus(
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(top = 8.dp),
+                modifier = Modifier.padding(top = JournalSpacing.space8),
             )
         }
         action?.let {
             Box(
                 modifier = Modifier
-                    .padding(top = 24.dp)
+                    .padding(top = JournalSpacing.space24)
                     .size(width = 220.dp, height = 48.dp),
                 contentAlignment = Alignment.Center,
             ) {

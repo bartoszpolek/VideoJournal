@@ -23,7 +23,8 @@ fun VideoJournalTheme(
 ) {
     MaterialTheme(
         colorScheme = JournalColorScheme,
-        typography = Typography,
+        typography = JournalTypography,
+        shapes = JournalShapes,
         content = content,
     )
 }

@@ -43,11 +43,6 @@ fun rememberVideoExoPlayer(): ExoPlayer {
 
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-    }
-
-    DisposableEffect(exoPlayer) {
-        onDispose {
             exoPlayer.release()
         }
     }
@@ -64,14 +59,23 @@ fun VideoPlayer(
     modifier: Modifier = Modifier,
     useController: Boolean = false,
 ) {
+    val uri = remember(videoPath) { Uri.fromFile(File(videoPath)) }
+
     LaunchedEffect(exoPlayer, videoPath, playWhenReady) {
-        val uri = Uri.fromFile(File(videoPath))
         if (exoPlayer.currentMediaItem?.localConfiguration?.uri != uri) {
             exoPlayer.playWhenReady = false
             exoPlayer.setMediaItem(MediaItem.fromUri(uri))
             exoPlayer.prepare()
         }
         exoPlayer.playWhenReady = playWhenReady
+    }
+
+    DisposableEffect(exoPlayer, uri) {
+        onDispose {
+            if (exoPlayer.currentMediaItem?.localConfiguration?.uri == uri) {
+                exoPlayer.pause()
+            }
+        }
     }
 
     AndroidView(

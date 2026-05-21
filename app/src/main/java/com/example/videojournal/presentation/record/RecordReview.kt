@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -24,21 +23,20 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.Alignment
 import com.example.videojournal.R
+import com.example.videojournal.presentation.design.JournalReviewMediaBackground
+import com.example.videojournal.presentation.design.JournalSpacing
 import com.example.videojournal.presentation.design.VideoJournalTheme
 import com.example.videojournal.presentation.media.VideoPlayer
 import com.example.videojournal.presentation.media.rememberVideoExoPlayer
-
-private val RecordReviewPreviewColor = Color.Black
 
 @Composable
 internal fun RecordReview(
@@ -67,10 +65,10 @@ internal fun RecordReview(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(24.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp),
+                .padding(JournalSpacing.space24),
+            verticalArrangement = Arrangement.spacedBy(JournalSpacing.space20),
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(JournalSpacing.space4)) {
                 Text(
                     text = stringResource(R.string.record_review_title),
                     style = MaterialTheme.typography.headlineSmall,
@@ -87,8 +85,8 @@ internal fun RecordReview(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(previewHeight)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(RecordReviewPreviewColor),
+                    .clip(MaterialTheme.shapes.small)
+                    .background(JournalReviewMediaBackground),
             ) {
                 VideoPlayer(
                     exoPlayer = exoPlayer,
@@ -117,7 +115,7 @@ internal fun RecordReview(
                 }
                 Button(
                     onClick = onSave,
-                    modifier = Modifier.padding(start = 12.dp),
+                    modifier = Modifier.padding(start = JournalSpacing.space12),
                 ) {
                     Text(stringResource(R.string.record_save))
                 }

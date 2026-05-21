@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -24,7 +23,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -33,11 +31,12 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.videojournal.R
-
-private val RecordPreviewFallbackColor = Color(0xFF101114)
-private val RecordOnMediaColor = Color.White
-private val RecordCaptureButtonColor = Color(0xFFFF2D55)
-private val RecordTimerShadowColor = Color.Black.copy(alpha = 0.72f)
+import com.example.videojournal.presentation.design.JournalMediaBackground
+import com.example.videojournal.presentation.design.JournalMediaShape
+import com.example.videojournal.presentation.design.JournalOnMedia
+import com.example.videojournal.presentation.design.JournalRecordCapture
+import com.example.videojournal.presentation.design.JournalRecordTimerShadow
+import com.example.videojournal.presentation.design.JournalSpacing
 
 @Composable
 fun RecordScreen(
@@ -192,17 +191,17 @@ private fun RecordCameraContent(
             .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding()
             .navigationBarsPadding()
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = JournalSpacing.space16)
             .padding(top = 22.dp, bottom = 28.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(24.dp),
+        verticalArrangement = Arrangement.spacedBy(JournalSpacing.space24),
     ) {
         Box(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(36.dp))
-                .background(RecordPreviewFallbackColor),
+                .clip(JournalMediaShape)
+                .background(JournalMediaBackground),
         ) {
             CameraPreview(
                 cameraController = cameraController,
@@ -212,10 +211,10 @@ private fun RecordCameraContent(
 
             Text(
                 text = topLabel,
-                color = RecordOnMediaColor,
+                color = JournalOnMedia,
                 style = MaterialTheme.typography.titleMedium.copy(
                     shadow = Shadow(
-                        color = RecordTimerShadowColor,
+                        color = JournalRecordTimerShadow,
                         offset = Offset(x = 0f, y = 2f),
                         blurRadius = 8f,
                     ),
@@ -223,7 +222,7 @@ private fun RecordCameraContent(
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier
                     .align(Alignment.TopCenter)
-                    .padding(top = 24.dp),
+                    .padding(top = JournalSpacing.space24),
             )
         }
 
@@ -262,15 +261,15 @@ private fun RecordCaptureButton(
                 this.contentDescription = contentDescription
             }
             .border(width = 4.dp, color = ringColor, shape = CircleShape)
-            .padding(8.dp),
+            .padding(JournalSpacing.space8),
         contentAlignment = Alignment.Center,
     ) {
         Box(
             modifier = Modifier
                 .size(if (isRecording) 38.dp else 68.dp)
                 .background(
-                    color = RecordCaptureButtonColor,
-                    shape = if (isRecording) RoundedCornerShape(10.dp) else CircleShape,
+                    color = JournalRecordCapture,
+                    shape = if (isRecording) MaterialTheme.shapes.medium else CircleShape,
                 ),
         )
     }
