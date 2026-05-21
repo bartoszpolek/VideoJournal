@@ -87,9 +87,5 @@ fun VideoPlayer(
                 resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
             }
         },
-        update = { playerView ->
-            playerView.player = exoPlayer
-            playerView.useController = useController
-        },
     )
 }

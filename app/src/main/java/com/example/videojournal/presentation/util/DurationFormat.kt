@@ -1,6 +1,6 @@
-package com.example.videojournal.presentation.record
+package com.example.videojournal.presentation.util
 
-internal fun formatRecordDuration(durationMs: Long): String {
+internal fun formatDuration(durationMs: Long): String {
     val totalSeconds = (durationMs / 1_000).coerceAtLeast(0)
     val minutes = totalSeconds / 60
     val seconds = totalSeconds % 60

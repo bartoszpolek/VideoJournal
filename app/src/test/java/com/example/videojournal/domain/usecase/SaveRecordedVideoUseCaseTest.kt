@@ -24,10 +24,18 @@ class SaveRecordedVideoUseCaseTest {
         val thumbnailGenerator = FakeThumbnailGenerator().apply {
             result = "/files/thumbnails/thumb.jpg"
         }
-        val useCase = createUseCase(repository, storage, thumbnailGenerator, StandardTestDispatcher(testScheduler))
+        val useCase = createUseCase(
+            repository,
+            storage,
+            thumbnailGenerator,
+            StandardTestDispatcher(testScheduler)
+        )
 
         val video = useCase(
-            recording = PendingRecording(tempFilePath = "/cache/video_recording/temp.mp4", durationMs = 5_000L),
+            recording = PendingRecording(
+                tempFilePath = "/cache/video_recording/temp.mp4",
+                durationMs = 5_000L
+            ),
             description = "  first clip  ",
         )
 
@@ -50,10 +58,18 @@ class SaveRecordedVideoUseCaseTest {
         val thumbnailGenerator = FakeThumbnailGenerator().apply {
             exception = IllegalStateException("thumbnail failed")
         }
-        val useCase = createUseCase(repository, storage, thumbnailGenerator, StandardTestDispatcher(testScheduler))
+        val useCase = createUseCase(
+            repository,
+            storage,
+            thumbnailGenerator,
+            StandardTestDispatcher(testScheduler)
+        )
 
         val video = useCase(
-            recording = PendingRecording(tempFilePath = "/cache/video_recording/temp.mp4", durationMs = 5_000L),
+            recording = PendingRecording(
+                tempFilePath = "/cache/video_recording/temp.mp4",
+                durationMs = 5_000L
+            ),
             description = "",
         )
 
@@ -72,11 +88,19 @@ class SaveRecordedVideoUseCaseTest {
         val thumbnailGenerator = FakeThumbnailGenerator().apply {
             result = "/files/thumbnails/thumb.jpg"
         }
-        val useCase = createUseCase(repository, storage, thumbnailGenerator, StandardTestDispatcher(testScheduler))
+        val useCase = createUseCase(
+            repository,
+            storage,
+            thumbnailGenerator,
+            StandardTestDispatcher(testScheduler)
+        )
 
         val thrown = runCatching {
             useCase(
-                recording = PendingRecording(tempFilePath = "/cache/video_recording/temp.mp4", durationMs = 5_000L),
+                recording = PendingRecording(
+                    tempFilePath = "/cache/video_recording/temp.mp4",
+                    durationMs = 5_000L
+                ),
                 description = "first clip",
             )
         }.exceptionOrNull()
@@ -95,11 +119,19 @@ class SaveRecordedVideoUseCaseTest {
             promoteException = IllegalStateException("promote failed")
         }
         val thumbnailGenerator = FakeThumbnailGenerator()
-        val useCase = createUseCase(repository, storage, thumbnailGenerator, StandardTestDispatcher(testScheduler))
+        val useCase = createUseCase(
+            repository,
+            storage,
+            thumbnailGenerator,
+            StandardTestDispatcher(testScheduler)
+        )
 
         val thrown = runCatching {
             useCase(
-                recording = PendingRecording(tempFilePath = "/cache/video_recording/temp.mp4", durationMs = 5_000L),
+                recording = PendingRecording(
+                    tempFilePath = "/cache/video_recording/temp.mp4",
+                    durationMs = 5_000L
+                ),
                 description = "first clip",
             )
         }.exceptionOrNull()
@@ -121,11 +153,19 @@ class SaveRecordedVideoUseCaseTest {
         val thumbnailGenerator = FakeThumbnailGenerator().apply {
             result = "/files/thumbnails/thumb.jpg"
         }
-        val useCase = createUseCase(repository, storage, thumbnailGenerator, StandardTestDispatcher(testScheduler))
+        val useCase = createUseCase(
+            repository,
+            storage,
+            thumbnailGenerator,
+            StandardTestDispatcher(testScheduler)
+        )
 
         val thrown = runCatching {
             useCase(
-                recording = PendingRecording(tempFilePath = "/cache/video_recording/temp.mp4", durationMs = 5_000L),
+                recording = PendingRecording(
+                    tempFilePath = "/cache/video_recording/temp.mp4",
+                    durationMs = 5_000L
+                ),
                 description = "first clip",
             )
         }.exceptionOrNull()

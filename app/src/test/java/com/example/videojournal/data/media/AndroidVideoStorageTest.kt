@@ -1,6 +1,5 @@
 package com.example.videojournal.data.media
 
-import java.io.File
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -10,6 +9,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+import java.io.File
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class AndroidVideoStorageTest {
@@ -65,7 +65,8 @@ class AndroidVideoStorageTest {
     @Test
     fun `cleanup temp recordings removes temp recording directory`() = runTest {
         val storage = createStorage()
-        val tempDirectory = File(temporaryFolder.root, "cache/${AndroidVideoStorage.TEMP_RECORDINGS_DIRECTORY}")
+        val tempDirectory =
+            File(temporaryFolder.root, "cache/${AndroidVideoStorage.TEMP_RECORDINGS_DIRECTORY}")
         assertTrue(tempDirectory.mkdirs())
         val abandonedRecording = File(tempDirectory, "abandoned.mp4").apply {
             writeText("video bytes")

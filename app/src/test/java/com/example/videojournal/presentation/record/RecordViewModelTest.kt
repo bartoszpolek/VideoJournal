@@ -21,11 +21,9 @@ class RecordViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     @Test
-    fun `recording can be saved with description`() = runTest(mainDispatcherRule.testDispatcher) {
-        val repository = FakeVideoRepository()
+    fun `reviewed recording can be saved`() = runTest(mainDispatcherRule.testDispatcher) {
         val storage = FakeVideoStorage()
         val viewModel = createViewModel(
-            repository = repository,
             storage = storage,
         )
 
@@ -46,13 +44,20 @@ class RecordViewModelTest {
             ),
         )
         viewModel.onIntent(RecordIntent.DescriptionChanged("  first clip  "))
+
+        assertEquals(
+            RecordUiState.Reviewing(
+                tempFilePath = storage.tempRecordingPath,
+                durationMs = 2_500L,
+                description = "  first clip  ",
+            ),
+            viewModel.uiState.value,
+        )
+
         viewModel.onIntent(RecordIntent.SaveClicked)
         advanceUntilIdle()
 
         assertEquals(RecordUiState.Done, viewModel.uiState.value)
-        assertEquals("first clip", repository.savedVideos.single().description)
-        assertEquals(2_500L, repository.savedVideos.single().durationMs)
-        assertEquals(listOf(storage.tempRecordingPath), storage.promotedTempPaths)
     }
 
     @Test
@@ -111,27 +116,28 @@ class RecordViewModelTest {
     }
 
     @Test
-    fun `discard deletes temp recording and returns to ready`() = runTest(mainDispatcherRule.testDispatcher) {
-        val storage = FakeVideoStorage()
-        val viewModel = createViewModel(storage = storage)
+    fun `discard deletes temp recording and returns to ready`() =
+        runTest(mainDispatcherRule.testDispatcher) {
+            val storage = FakeVideoStorage()
+            val viewModel = createViewModel(storage = storage)
 
-        viewModel.onIntent(permissionsGranted())
-        viewModel.onIntent(RecordIntent.StartClicked)
-        advanceUntilIdle()
-        viewModel.onIntent(RecordIntent.CameraRecordingStarted(storage.tempRecordingPath))
+            viewModel.onIntent(permissionsGranted())
+            viewModel.onIntent(RecordIntent.StartClicked)
+            advanceUntilIdle()
+            viewModel.onIntent(RecordIntent.CameraRecordingStarted(storage.tempRecordingPath))
 
-        viewModel.onIntent(
-            RecordIntent.CameraRecordingFinalized(
-                tempFilePath = storage.tempRecordingPath,
-                durationMs = 2_500L,
-            ),
-        )
-        viewModel.onIntent(RecordIntent.DiscardClicked)
-        advanceUntilIdle()
+            viewModel.onIntent(
+                RecordIntent.CameraRecordingFinalized(
+                    tempFilePath = storage.tempRecordingPath,
+                    durationMs = 2_500L,
+                ),
+            )
+            viewModel.onIntent(RecordIntent.DiscardClicked)
+            advanceUntilIdle()
 
-        assertEquals(RecordUiState.Ready, viewModel.uiState.value)
-        assertEquals(listOf(storage.tempRecordingPath), storage.deleteAttempts)
-    }
+            assertEquals(RecordUiState.Ready, viewModel.uiState.value)
+            assertEquals(listOf(storage.tempRecordingPath), storage.deleteAttempts)
+        }
 
     @Test
     fun `camera denial maps to permission denied`() = runTest(mainDispatcherRule.testDispatcher) {

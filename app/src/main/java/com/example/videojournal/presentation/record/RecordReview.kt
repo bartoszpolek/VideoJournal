@@ -1,6 +1,5 @@
 package com.example.videojournal.presentation.record
 
-import androidx.camera.view.LifecycleCameraController
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,11 +21,9 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,6 +34,7 @@ import com.example.videojournal.presentation.design.JournalSpacing
 import com.example.videojournal.presentation.design.VideoJournalTheme
 import com.example.videojournal.presentation.media.VideoPlayer
 import com.example.videojournal.presentation.media.rememberVideoExoPlayer
+import com.example.videojournal.presentation.util.formatDuration
 
 @Composable
 internal fun RecordReview(
@@ -75,7 +73,7 @@ internal fun RecordReview(
                     fontWeight = FontWeight.SemiBold,
                 )
                 Text(
-                    text = formatRecordDuration(state.durationMs),
+                    text = formatDuration(state.durationMs),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -122,12 +120,6 @@ internal fun RecordReview(
             }
         }
     }
-}
-
-@Composable
-private fun rememberPreviewCameraController(): LifecycleCameraController {
-    val context = LocalContext.current
-    return remember(context) { LifecycleCameraController(context) }
 }
 
 @Preview(showBackground = true)

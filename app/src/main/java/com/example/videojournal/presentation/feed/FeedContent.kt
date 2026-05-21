@@ -25,10 +25,10 @@ import com.example.videojournal.domain.model.VideoEntry
 import com.example.videojournal.presentation.media.rememberVideoExoPlayer
 import com.example.videojournal.presentation.util.findActivity
 import com.example.videojournal.presentation.util.shareVideoFile
-import java.io.File
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.mapNotNull
+import java.io.File
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

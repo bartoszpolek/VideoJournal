@@ -29,22 +29,23 @@ class FeedViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     @Test
-    fun `starts loading then maps videos to content`() = runTest(mainDispatcherRule.testDispatcher) {
-        val video = videoEntry(id = "video-1")
-        val repository = ControlledVideoRepository()
-        val viewModel = createViewModel(repository = repository)
+    fun `starts loading then maps videos to content`() =
+        runTest(mainDispatcherRule.testDispatcher) {
+            val video = videoEntry(id = "video-1")
+            val repository = ControlledVideoRepository()
+            val viewModel = createViewModel(repository = repository)
 
-        assertEquals(FeedUiState.Loading, viewModel.uiState.value)
+            assertEquals(FeedUiState.Loading, viewModel.uiState.value)
 
-        advanceUntilIdle()
-        repository.emit(listOf(video))
-        advanceUntilIdle()
+            advanceUntilIdle()
+            repository.emit(listOf(video))
+            advanceUntilIdle()
 
-        assertEquals(
-            FeedUiState.Content(items = listOf(video)),
-            viewModel.uiState.value,
-        )
-    }
+            assertEquals(
+                FeedUiState.Content(items = listOf(video)),
+                viewModel.uiState.value,
+            )
+        }
 
     @Test
     fun `empty video list maps to empty state`() = runTest(mainDispatcherRule.testDispatcher) {
@@ -114,23 +115,24 @@ class FeedViewModelTest {
     }
 
     @Test
-    fun `delete failure keeps content and exposes user message`() = runTest(mainDispatcherRule.testDispatcher) {
-        val video = videoEntry(id = "video-1")
-        val repository = DeleteFailingVideoRepository(initialVideos = listOf(video))
-        val viewModel = createViewModel(repository = repository)
-        advanceUntilIdle()
+    fun `delete failure keeps content and exposes user message`() =
+        runTest(mainDispatcherRule.testDispatcher) {
+            val video = videoEntry(id = "video-1")
+            val repository = DeleteFailingVideoRepository(initialVideos = listOf(video))
+            val viewModel = createViewModel(repository = repository)
+            advanceUntilIdle()
 
-        viewModel.onIntent(FeedIntent.DeleteClicked(video.id))
-        advanceUntilIdle()
+            viewModel.onIntent(FeedIntent.DeleteClicked(video.id))
+            advanceUntilIdle()
 
-        assertEquals(
-            FeedUiState.Content(
-                items = listOf(video),
-                userMessageResId = R.string.feed_error_delete,
-            ),
-            viewModel.uiState.value,
-        )
-    }
+            assertEquals(
+                FeedUiState.Content(
+                    items = listOf(video),
+                    userMessageResId = R.string.feed_error_delete,
+                ),
+                viewModel.uiState.value,
+            )
+        }
 
     @Test
     fun `user message shown clears user message`() = runTest(mainDispatcherRule.testDispatcher) {
@@ -160,33 +162,35 @@ class FeedViewModelTest {
     }
 
     @Test
-    fun `page change outside content state is ignored`() = runTest(mainDispatcherRule.testDispatcher) {
-        val loadingRepository = ControlledVideoRepository()
-        val loadingViewModel = createViewModel(repository = loadingRepository)
-        val emptyViewModel = createViewModel(videos = emptyList())
-        advanceUntilIdle()
+    fun `page change outside content state is ignored`() =
+        runTest(mainDispatcherRule.testDispatcher) {
+            val loadingRepository = ControlledVideoRepository()
+            val loadingViewModel = createViewModel(repository = loadingRepository)
+            val emptyViewModel = createViewModel(videos = emptyList())
+            advanceUntilIdle()
 
-        loadingViewModel.onIntent(FeedIntent.PageChanged("video-1"))
-        emptyViewModel.onIntent(FeedIntent.PageChanged("video-1"))
+            loadingViewModel.onIntent(FeedIntent.PageChanged("video-1"))
+            emptyViewModel.onIntent(FeedIntent.PageChanged("video-1"))
 
-        assertEquals(FeedUiState.Loading, loadingViewModel.uiState.value)
-        assertEquals(FeedUiState.Empty, emptyViewModel.uiState.value)
-    }
+            assertEquals(FeedUiState.Loading, loadingViewModel.uiState.value)
+            assertEquals(FeedUiState.Empty, emptyViewModel.uiState.value)
+        }
 
     @Test
-    fun `playing id is kept when observed video still exists`() = runTest(mainDispatcherRule.testDispatcher) {
-        val first = videoEntry(id = "video-1", createdAtMillis = 1_000L)
-        val second = videoEntry(id = "video-2", createdAtMillis = 2_000L)
-        val repository = FakeVideoRepository(initialVideos = listOf(first))
-        val viewModel = createViewModel(repository = repository)
-        advanceUntilIdle()
+    fun `playing id is kept when observed video still exists`() =
+        runTest(mainDispatcherRule.testDispatcher) {
+            val first = videoEntry(id = "video-1", createdAtMillis = 1_000L)
+            val second = videoEntry(id = "video-2", createdAtMillis = 2_000L)
+            val repository = FakeVideoRepository(initialVideos = listOf(first))
+            val viewModel = createViewModel(repository = repository)
+            advanceUntilIdle()
 
-        viewModel.onIntent(FeedIntent.VideoTapped(first.id))
-        repository.save(second)
-        advanceUntilIdle()
+            viewModel.onIntent(FeedIntent.VideoTapped(first.id))
+            repository.save(second)
+            advanceUntilIdle()
 
-        assertEquals(first.id, viewModel.contentState().playingId)
-    }
+            assertEquals(first.id, viewModel.contentState().playingId)
+        }
 
     private fun createViewModel(
         videos: List<VideoEntry> = emptyList(),

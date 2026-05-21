@@ -34,6 +34,7 @@ fun FeedScreen(
             body = stringResource(uiState.messageResId),
             modifier = modifier,
         )
+
         FeedUiState.Loading -> LoadingFeed(modifier)
         is FeedUiState.Content -> FeedContent(
             state = uiState,

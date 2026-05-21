@@ -8,7 +8,6 @@ import com.example.videojournal.domain.model.VideoEntry
 import com.example.videojournal.domain.repository.VideoRepository
 import com.example.videojournal.domain.util.DispatcherProvider
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
@@ -23,7 +22,6 @@ class OfflineVideoRepository(
             .asFlow()
             .mapToList(dispatcherProvider.io)
             .map { rows -> rows.map { it.toDomain() } }
-            .flowOn(dispatcherProvider.io)
 
     override suspend fun save(video: VideoEntry) {
         withContext(dispatcherProvider.io) {

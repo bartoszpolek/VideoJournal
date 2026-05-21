@@ -2,18 +2,16 @@ package com.example.videojournal.app
 
 import android.app.Application
 import com.example.videojournal.app.di.appModules
-import com.example.videojournal.domain.media.VideoStorage
+import com.example.videojournal.app.startup.StartupTask
+import com.example.videojournal.domain.util.DispatcherProvider
 import com.example.videojournal.domain.util.runCatchingNonCancellation
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
 class VideoJournalApplication : Application() {
-    private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-
     override fun onCreate() {
         super.onCreate()
 
@@ -22,10 +20,15 @@ class VideoJournalApplication : Application() {
             modules(appModules)
         }
 
-        val videoStorage = koinApplication.koin.get<VideoStorage>()
+        val koin = koinApplication.koin
+        val dispatcherProvider = koin.get<DispatcherProvider>()
+        val startupTasks = koin.getAll<StartupTask>()
+        val applicationScope = CoroutineScope(SupervisorJob() + dispatcherProvider.io)
         applicationScope.launch {
-            runCatchingNonCancellation {
-                videoStorage.cleanupTempRecordings()
+            startupTasks.forEach { task ->
+                runCatchingNonCancellation {
+                    task.run()
+                }
             }
         }
     }

@@ -7,8 +7,8 @@ import com.example.videojournal.domain.model.VideoEntry
 import com.example.videojournal.domain.repository.VideoRepository
 import com.example.videojournal.domain.util.DispatcherProvider
 import com.example.videojournal.domain.util.runCatchingNonCancellation
-import java.util.UUID
 import kotlinx.coroutines.withContext
+import java.util.UUID
 
 class SaveRecordedVideoUseCase(
     private val repository: VideoRepository,

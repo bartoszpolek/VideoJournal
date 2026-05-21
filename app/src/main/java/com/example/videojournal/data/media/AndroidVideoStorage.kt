@@ -1,18 +1,17 @@
 package com.example.videojournal.data.media
 
 import com.example.videojournal.domain.media.VideoStorage
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
 import java.util.UUID
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class AndroidVideoStorage(
     private val filesDir: File,
     private val cacheDir: File,
     private val idProvider: () -> String = { UUID.randomUUID().toString() },
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val ioDispatcher: CoroutineDispatcher,
 ) : VideoStorage {
     override suspend fun createTempRecordingFile(): String = withContext(ioDispatcher) {
         val tempFile = createEmptyFile(
@@ -22,20 +21,21 @@ class AndroidVideoStorage(
         tempFile.absolutePath
     }
 
-    override suspend fun promoteTempRecording(tempFilePath: String): String = withContext(ioDispatcher) {
-        val source = File(tempFilePath)
-        if (!source.isFile) {
-            throw IOException("Temp recording does not exist: $tempFilePath")
+    override suspend fun promoteTempRecording(tempFilePath: String): String =
+        withContext(ioDispatcher) {
+            val source = File(tempFilePath)
+            if (!source.isFile) {
+                throw IOException("Temp recording does not exist: $tempFilePath")
+            }
+
+            val destination = nextUnusedFile(
+                directory = videosDirectory,
+                extension = VIDEO_EXTENSION,
+            )
+
+            moveFile(source = source, destination = destination)
+            destination.absolutePath
         }
-
-        val destination = nextUnusedFile(
-            directory = videosDirectory,
-            extension = VIDEO_EXTENSION,
-        )
-
-        moveFile(source = source, destination = destination)
-        destination.absolutePath
-    }
 
     override suspend fun deleteFile(path: String) {
         withContext(ioDispatcher) {
@@ -104,18 +104,6 @@ class AndroidVideoStorage(
         } catch (throwable: Throwable) {
             destination.delete()
             throw throwable
-        }
-    }
-
-    private fun File.ensureDirectory() {
-        if (exists()) {
-            if (!isDirectory) {
-                throw IOException("Expected directory, got file: $absolutePath")
-            }
-            return
-        }
-        if (!mkdirs()) {
-            throw IOException("Could not create directory: $absolutePath")
         }
     }
 

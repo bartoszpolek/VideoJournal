@@ -6,7 +6,6 @@ import com.example.videojournal.R
 import com.example.videojournal.domain.model.VideoEntry
 import com.example.videojournal.domain.usecase.DeleteVideoUseCase
 import com.example.videojournal.domain.usecase.ObserveVideosUseCase
-import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,6 +13,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlin.coroutines.cancellation.CancellationException
 
 class FeedViewModel(
     observeVideosUseCase: ObserveVideosUseCase,

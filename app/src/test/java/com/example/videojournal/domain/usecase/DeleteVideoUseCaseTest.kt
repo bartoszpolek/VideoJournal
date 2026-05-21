@@ -1,6 +1,5 @@
 package com.example.videojournal.domain.usecase
 
-import com.example.videojournal.domain.model.VideoEntry
 import com.example.videojournal.domain.testing.FakeVideoRepository
 import com.example.videojournal.domain.testing.FakeVideoStorage
 import com.example.videojournal.domain.testing.TestDispatcherProvider

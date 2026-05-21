@@ -44,7 +44,9 @@ sealed interface RecordIntent {
     data object StartClicked : RecordIntent
     data class CameraRecordingStarted(val tempFilePath: String) : RecordIntent
     data class CameraRecordingDurationChanged(val elapsedMs: Long) : RecordIntent
-    data class CameraRecordingFinalized(val tempFilePath: String, val durationMs: Long) : RecordIntent
+    data class CameraRecordingFinalized(val tempFilePath: String, val durationMs: Long) :
+        RecordIntent
+
     data class CameraRecordingFailed(val tempFilePath: String?) : RecordIntent
     data class DescriptionChanged(val description: String) : RecordIntent
     data object SaveClicked : RecordIntent

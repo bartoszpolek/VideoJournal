@@ -2,11 +2,11 @@ package com.example.videojournal.presentation.record
 
 import android.annotation.SuppressLint
 import android.content.Context
-import androidx.camera.view.LifecycleCameraController
-import androidx.camera.view.video.AudioConfig
 import androidx.camera.video.FileOutputOptions
 import androidx.camera.video.Recording
 import androidx.camera.video.VideoRecordEvent
+import androidx.camera.view.LifecycleCameraController
+import androidx.camera.view.video.AudioConfig
 import androidx.core.content.ContextCompat
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -43,6 +43,7 @@ internal fun startCameraRecording(
                         onFailure(tempFilePath)
                     }
                 }
+
                 else -> Unit
             }
         }

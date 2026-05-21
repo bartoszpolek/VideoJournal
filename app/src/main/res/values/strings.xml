@@ -25,8 +25,8 @@
     <string name="record_ready_title">Ready to record</string>
     <string name="record_review_title">Review clip</string>
     <string name="record_save">Save</string>
-    <string name="record_saving">Saving...</string>
-    <string name="record_starting">Starting...</string>
+    <string name="record_saving">Saving&#8230;</string>
+    <string name="record_starting">Starting&#8230;</string>
     <string name="record_start">Record</string>
     <string name="record_stop">Stop</string>
     <string name="record_try_again">Try again</string>

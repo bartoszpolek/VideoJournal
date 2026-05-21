@@ -4,4 +4,5 @@ val appModules = listOf(
     dataModule,
     domainModule,
     presentationModule,
+    startupModule,
 )

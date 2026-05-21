@@ -37,6 +37,7 @@ import com.example.videojournal.presentation.design.JournalOnMedia
 import com.example.videojournal.presentation.design.JournalRecordCapture
 import com.example.videojournal.presentation.design.JournalRecordTimerShadow
 import com.example.videojournal.presentation.design.JournalSpacing
+import com.example.videojournal.presentation.util.formatDuration
 
 @Composable
 fun RecordScreen(
@@ -54,16 +55,18 @@ fun RecordScreen(
             body = stringResource(R.string.record_camera_permission_body),
             modifier = modifier,
         )
+
         is RecordUiState.PermissionDenied -> RecordPermissionDenied(
             permanentlyDenied = uiState.permanentlyDenied,
             onRequestPermissions = onRequestPermissions,
             onOpenSettings = onOpenSettings,
             modifier = modifier,
         )
+
         RecordUiState.Ready,
         is RecordUiState.StartingRecording,
         is RecordUiState.Recording,
-        -> {
+            -> {
             val cameraContentState = uiState.toRecordCameraContentState()
 
             RecordCameraContent(
@@ -78,6 +81,7 @@ fun RecordScreen(
                 modifier = modifier,
             )
         }
+
         is RecordUiState.Reviewing -> RecordReview(
             state = uiState,
             onDescriptionChanged = { description ->
@@ -87,17 +91,20 @@ fun RecordScreen(
             onDiscard = { onIntent(RecordIntent.DiscardClicked) },
             modifier = modifier,
         )
+
         RecordUiState.Saving -> RecordStatus(
             title = stringResource(R.string.record_saving),
             body = null,
             modifier = modifier,
             action = { CircularProgressIndicator() },
         )
+
         RecordUiState.Done -> RecordStatus(
             title = stringResource(R.string.record_done),
             body = null,
             modifier = modifier,
         )
+
         is RecordUiState.Error -> RecordStatus(
             title = stringResource(uiState.messageResId),
             body = null,
@@ -113,7 +120,6 @@ fun RecordScreen(
 
 private enum class RecordCameraControlsState {
     Start,
-    Starting,
     Stop,
 }
 
@@ -131,16 +137,19 @@ private fun RecordUiState.toRecordCameraContentState(): RecordCameraContentState
             tempFilePath = null,
             controlsState = RecordCameraControlsState.Start,
         )
+
         is RecordUiState.StartingRecording -> RecordCameraContentState(
             topLabel = stringResource(R.string.record_starting),
             tempFilePath = tempFilePath,
-            controlsState = RecordCameraControlsState.Starting,
+            controlsState = RecordCameraControlsState.Stop,
         )
+
         is RecordUiState.Recording -> RecordCameraContentState(
-            topLabel = formatRecordDuration(elapsedMs),
+            topLabel = formatDuration(elapsedMs),
             tempFilePath = tempFilePath,
             controlsState = RecordCameraControlsState.Stop,
         )
+
         else -> error("State does not render camera content: $this")
     }
 
@@ -158,13 +167,7 @@ private fun RecordCameraControls(
                 onClick = onStart,
             )
         }
-        RecordCameraControlsState.Starting -> {
-            RecordCaptureButton(
-                isRecording = true,
-                contentDescription = stringResource(R.string.record_stop),
-                onClick = onStop,
-            )
-        }
+
         RecordCameraControlsState.Stop -> {
             RecordCaptureButton(
                 isRecording = true,

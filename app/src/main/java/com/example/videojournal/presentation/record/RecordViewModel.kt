@@ -6,11 +6,11 @@ import com.example.videojournal.R
 import com.example.videojournal.domain.media.VideoStorage
 import com.example.videojournal.domain.model.PendingRecording
 import com.example.videojournal.domain.usecase.SaveRecordedVideoUseCase
-import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlin.coroutines.cancellation.CancellationException
 
 class RecordViewModel(
     private val saveRecordedVideoUseCase: SaveRecordedVideoUseCase,
@@ -30,6 +30,7 @@ class RecordViewModel(
                 tempFilePath = intent.tempFilePath,
                 durationMs = intent.durationMs,
             )
+
             is RecordIntent.CameraRecordingStarted -> onRecordingStarted(intent.tempFilePath)
             RecordIntent.RetryClicked -> _uiState.value = RecordUiState.CheckingPermissions
             RecordIntent.SaveClicked -> onSaveClicked()
@@ -89,10 +90,12 @@ class RecordViewModel(
                 if (currentState.tempFilePath != tempFilePath) return
                 currentState.elapsedMs
             }
+
             is RecordUiState.StartingRecording -> {
                 if (currentState.tempFilePath != tempFilePath) return
                 0L
             }
+
             else -> return
         }
 

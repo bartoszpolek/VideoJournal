@@ -4,19 +4,18 @@ import android.graphics.Bitmap
 import android.media.ThumbnailUtils
 import android.util.Size
 import com.example.videojournal.domain.media.ThumbnailGenerator
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.util.UUID
 import kotlin.coroutines.cancellation.CancellationException
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class AndroidThumbnailGenerator(
     private val filesDir: File,
     private val idProvider: () -> String = { UUID.randomUUID().toString() },
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val ioDispatcher: CoroutineDispatcher,
 ) : ThumbnailGenerator {
     override suspend fun generate(videoPath: String): String? = withContext(ioDispatcher) {
         try {
@@ -61,18 +60,6 @@ class AndroidThumbnailGenerator(
             }
         }
         throw IOException("Could not find a unique thumbnail name in ${directory.absolutePath}")
-    }
-
-    private fun File.ensureDirectory() {
-        if (exists()) {
-            if (!isDirectory) {
-                throw IOException("Expected directory, got file: $absolutePath")
-            }
-            return
-        }
-        if (!mkdirs()) {
-            throw IOException("Could not create directory: $absolutePath")
-        }
     }
 
     companion object {
